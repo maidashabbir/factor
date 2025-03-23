@@ -9,7 +9,9 @@ import requests
 from io import BytesIO
 from streamlit_lottie import st_lottie
 
-from qiskit import QuantumCircuit, Aer, transpile, assemble
+from qiskit import QuantumCircuit, transpile, assemble
+from qiskit_aer import Aer
+
 
 # ------------------------------------------------------------
 # 🧠 Page Configuration
