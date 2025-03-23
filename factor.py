@@ -1,3 +1,4 @@
+# Enhanced Factor Frenzy - Full Framework
 import time
 import random
 import pandas as pd
@@ -5,36 +6,27 @@ import matplotlib.pyplot as plt
 import streamlit as st
 import numpy as np
 import requests
-from datetime import datetime
 from io import BytesIO
 from streamlit_lottie import st_lottie
 
-# App Configuration
-st.set_page_config(page_title="Factor Frenzy: Can You Beat the Machine?", layout="centered")
+# ------------------------------------------------------------
+# 🧠 Page Configuration
+# ------------------------------------------------------------
+st.set_page_config(page_title="Factor Frenzy: Can You Beat the Machine?", layout="wide")
 st.title("🎯 Factor Frenzy")
 st.caption("Crack the code. Learn the logic. Outsmart the system.")
 
-# Theme Toggle
-dark_mode = st.sidebar.toggle("🌗 Dark Mode", value=False)
-if dark_mode:
-    st.markdown("""
-        <style>
-            body, .main { background-color: #1e1e1e; color: white; }
-            .stButton>button { background-color: #4CAF50; color: white; }
-        </style>
-    """, unsafe_allow_html=True)
-else:
-    st.markdown("""
-        <style>
-            .main { background-color: #f5f5f5; }
-            .stButton>button { background-color: #4CAF50; color: white; border-radius: 12px; padding: 10px 20px; font-weight: bold; }
-            .stRadio>div>div { padding: 5px; }
-        </style>
-    """, unsafe_allow_html=True)
+st.markdown("""
+<style>
+    .main { background-color: #f5f5f5; }
+    .stButton>button { background-color: #4CAF50; color: white; border-radius: 12px; padding: 10px 20px; font-weight: bold; }
+    .stRadio>div>div { padding: 5px; }
+</style>
+""", unsafe_allow_html=True)
 
-# Load Lottie Animations
-@st.cache_data
-
+# ------------------------------------------------------------
+# 🪄 Lottie Animations
+# ------------------------------------------------------------
 def load_lottieurl(url):
     r = requests.get(url)
     if r.status_code != 200:
@@ -43,22 +35,21 @@ def load_lottieurl(url):
 
 success_anim = load_lottieurl("https://assets9.lottiefiles.com/packages/lf20_jbrw3hcz.json")
 fail_anim = load_lottieurl("https://assets10.lottiefiles.com/packages/lf20_jjj3gx1z.json")
-quantumcat_anim = load_lottieurl("https://assets2.lottiefiles.com/private_files/lf30_kqshlcsx.json")
 
-# QuantumCat Assistant
-def quantumcat(message):
-    with st.chat_message("QuantumCat"):
-        st_lottie(quantumcat_anim, height=100)
-        st.markdown(f"**QuantumCat says:** {message}")
+# ------------------------------------------------------------
+# 📘 Mini Explainer Cards
+# ------------------------------------------------------------
+def show_explainers():
+    with st.expander("🧠 What is Factorization?"):
+        st.write("Factorization is the process of breaking down a number into its prime factors. It's a core principle of encryption.")
+    with st.expander("⚛️ Post-Quantum Cryptography"):
+        st.write("Quantum computers can factor large numbers very quickly, threatening current RSA encryption. That's why learning this matters.")
+    with st.expander("🎮 Why Gamify It?"):
+        st.write("Making learning fun boosts understanding and retention — and shows how theory applies in practice.")
 
+# ------------------------------------------------------------
 # Trial Division Factorization
-if 'game_log' not in st.session_state:
-    st.session_state.game_log = []
-if 'score' not in st.session_state:
-    st.session_state.score = 0
-if 'leaderboard' not in st.session_state:
-    st.session_state.leaderboard = []
-
+# ------------------------------------------------------------
 def trial_division(n):
     start = time.time()
     factors = []
@@ -71,8 +62,9 @@ def trial_division(n):
     end = time.time()
     return factors, round(end - start, 6)
 
+# ------------------------------------------------------------
 # AI Hint Bot
-
+# ------------------------------------------------------------
 def hint_bot(number):
     if number % 2 == 0:
         return "Try even numbers like 2 or 4."
@@ -83,14 +75,19 @@ def hint_bot(number):
     else:
         return "Try small primes like 5 or 7."
 
-# Challenge Mode Logic + Leaderboard
+# ------------------------------------------------------------
+# Challenge Mode + Leaderboard
+# ------------------------------------------------------------
+if 'score' not in st.session_state:
+    st.session_state.score = 0
+if 'leaderboard' not in st.session_state:
+    st.session_state.leaderboard = []
 
 def play_challenge_mode():
     st.subheader("🧩 Challenge Mode")
     challenge_number = random.choice([21, 33, 39, 51, 65, 77, 85, 91, 95])
     st.markdown(f"**Your challenge number is:** `{challenge_number}`")
     st.info("🤖 Hint Bot: " + hint_bot(challenge_number))
-    quantumcat("Focus and factor fast!")
 
     guess = st.text_input("Enter the prime factors separated by commas (e.g. 3,7)")
 
@@ -104,23 +101,21 @@ def play_challenge_mode():
             st.balloons()
             st_lottie(success_anim, height=150)
             st.markdown(f"🏆 Score: **{st.session_state.score}**")
-            st.session_state.leaderboard.append({"Score": st.session_state.score, "Time": str(datetime.now())})
-            st.session_state.game_log.append({"Mode": "Challenge", "Input": challenge_number, "Result": "Correct", "Time": str(datetime.now())})
+            st.session_state.leaderboard.append(st.session_state.score)
         else:
             st.error(f"❌ Nope! Correct answer: {correct_factors}")
-            st_lottie(fail_anim, height=150)
-            st.session_state.game_log.append({"Mode": "Challenge", "Input": challenge_number, "Result": "Incorrect", "Time": str(datetime.now())})
             st.markdown(f"🏆 Score: **{st.session_state.score}**")
 
     if st.session_state.leaderboard:
         st.markdown("---")
         st.markdown("### 🥇 Leaderboard (Highest Scores)")
-        top_scores = sorted(st.session_state.leaderboard, key=lambda x: x['Score'], reverse=True)[:5]
-        for i, row in enumerate(top_scores, start=1):
-            st.markdown(f"**{i}. Score: {row['Score']}** — *{row['Time']}*")
+        top_scores = sorted(st.session_state.leaderboard, reverse=True)[:5]
+        for i, score in enumerate(top_scores, start=1):
+            st.markdown(f"**{i}. Score: {score}**")
 
-# Main Factorization Tool
-
+# ------------------------------------------------------------
+# Classic Mode (Try Your Own)
+# ------------------------------------------------------------
 def play_factor_tool():
     st.subheader("🛠️ Try Your Own Number")
     number = st.number_input("Enter a number to factor (>= 2):", min_value=2, value=15)
@@ -139,11 +134,9 @@ def play_factor_tool():
             else:
                 st.success("🟢 Safe. Easily factorable with classical methods.")
 
-            st.session_state.game_log.append({"Mode": "Try It", "Input": number, "Factors": str(factors), "TimeTaken": duration, "When": str(datetime.now())})
-            quantumcat("Nice work! Want to try a bigger challenge?")
-
-# Batch Factor & Compare with Radar Chart
-
+# ------------------------------------------------------------
+# Radar Chart Performance View
+# ------------------------------------------------------------
 def show_batch_comparison():
     with st.expander("📊 See how classical factorization performs across numbers"):
         test_numbers = [21, 33, 39, 57, 65, 77, 85, 91, 95, 111, 123, 129]
@@ -178,42 +171,38 @@ def show_batch_comparison():
 
         csv = df.to_csv(index=False).encode('utf-8')
         st.download_button("💾 Download Results as CSV", data=csv, file_name="factorization_results.csv", mime='text/csv')
-        quantumcat("This radar chart is sharp! 🧠")
 
-# Summary Export
-
-def show_summary():
-    st.subheader("📋 Game Summary & Export")
-    if st.session_state.game_log:
-        df = pd.DataFrame(st.session_state.game_log)
-        st.dataframe(df)
-        csv = df.to_csv(index=False).encode('utf-8')
-        st.download_button("📥 Download Full Game Log", data=csv, file_name="factor_frenzy_log.csv", mime='text/csv')
-        quantumcat("Perfect! Now you can include this in your assignment 📘")
-    else:
-        st.info("No games played yet.")
-
-# App Sections
+# ------------------------------------------------------------
+# Navigation
+# ------------------------------------------------------------
+show_explainers()
 
 with st.sidebar:
     st.header("🧭 Navigation")
-    page = st.radio("Choose a mode:", ["Try It Yourself", "Challenge Mode", "Performance Chart", "Summary"])
+    page = st.radio("Choose a mode:", ["Classic Mode", "Challenge Mode", "Stats & Radar Chart", "Quantum Mode (Preview)"])
     st.markdown("---")
     st.markdown("Made with ❤️ using Python & Streamlit")
 
-if page == "Try It Yourself":
+# ------------------------------------------------------------
+# Mode Switching
+# ------------------------------------------------------------
+if page == "Classic Mode":
     play_factor_tool()
 elif page == "Challenge Mode":
     play_challenge_mode()
-elif page == "Performance Chart":
+elif page == "Stats & Radar Chart":
     show_batch_comparison()
-elif page == "Summary":
-    show_summary()
+elif page == "Quantum Mode (Preview)":
+    st.subheader("🚀 Quantum Mode Preview")
+    st.info("This area will one day simulate real quantum factorization using Shor’s Algorithm. For now, it’s under development 🚧")
+    st_lottie(load_lottieurl("https://assets4.lottiefiles.com/packages/lf20_rz3t0syb.json"), height=250)
 
+# ------------------------------------------------------------
+# 💬 Reflection Section
+# ------------------------------------------------------------
 st.markdown("""
 ---
 ### 💡 Reflection
-This app shows how classical factorization can scale across different inputs. It reflects the cryptographic challenges that quantum algorithms like Shor’s seek to overcome. While we do not simulate a full quantum circuit, this project highlights real-world performance, user interactivity, and educational design.
-
-We enhanced engagement through gamification, scoring, QuantumCat assistant, leaderboard tracking, export options, hint suggestions, and radar plots.
+This app demonstrates the power and limits of classical factorization, gamified to make number theory engaging and relevant. It supports learning through interactive challenge modes, visual comparisons, hint bots, and post-quantum security awareness.
 """)
+
