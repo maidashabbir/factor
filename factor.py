@@ -181,30 +181,32 @@ def show_batch_comparison():
 # ------------------------------------------------------------
 def render_quantum_mode():
     st.subheader("🚀 Quantum Mode - Simulated Shor's Algorithm")
-    st.info("This simulation shows how Shor’s Algorithm might work to factor small numbers using quantum principles.")
-    number = st.selectbox("Choose a number to factor (only supported: 15, 21, 35):", [15, 21, 35])
+    st.info("This simulation demonstrates the quantum concept of superposition and measurement using Qiskit.")
 
-    if st.button("⚛️ Simulate Quantum Factorization"):
-        st.markdown("### 🧪 Quantum Circuit Simulation")
-        qc = QuantumCircuit(4)
-        qc.h(range(4))
-        qc.barrier()
-        qc.x(0)
-        qc.cx(0, 1)
-        qc.h(range(4))
-        qc.measure_all()
+    number = st.selectbox("Choose a number to simulate:", [15, 21, 35])
+
+    if st.button("⚛️ Run Quantum Simulation"):
+        st.markdown("### 🧪 Example Quantum Circuit (Superposition & Measurement)")
+
+        # Create a simple circuit that creates superposition and measures it
+        qc = QuantumCircuit(2, 2)
+        qc.h(0)  # Hadamard gate to create superposition
+        qc.cx(0, 1)  # Entangle qubit 0 and 1
+        qc.measure([0, 1], [0, 1])  # Measure both qubits
 
         st.code(qc.draw(output="text"))
 
+        # Simulate
         backend = Aer.get_backend("aer_simulator")
         transpiled = transpile(qc, backend)
         qobj = assemble(transpiled)
         result = backend.run(qobj).result()
         counts = result.get_counts()
 
-        st.write("### 🧾 Measurement Outcomes:")
+        st.markdown("### 📊 Measurement Results")
         st.json(counts)
-        st.success("✅ Quantum simulation complete (mock Shor logic)")
+        st.success("✅ Quantum simulation complete!")
+
 
 # ------------------------------------------------------------
 # Navigation
