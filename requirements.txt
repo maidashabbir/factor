@@ -3,4 +3,4 @@ matplotlib
 pandas
 numpy
 streamlit-lottie
-qiskit
+qiskit==1.0.2
