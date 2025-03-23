@@ -130,14 +130,12 @@ def show_batch_comparison():
 
         # Radar chart
         radar_labels = df['Number'].astype(str).tolist()
-radar_values = df['Time'].tolist()
+        radar_values = df['Time'].tolist()
 
+        radar_labels += radar_labels[:1]
+        radar_values += radar_values[:1]
 
-radar_labels += radar_labels[:1]
-radar_values += radar_values[:1]
-
-angles = np.linspace(0, 2 * np.pi, len(radar_labels), endpoint=False).tolist()
-
+        angles = np.linspace(0, 2 * np.pi, len(radar_labels), endpoint=False).tolist()
 
         fig2, ax2 = plt.subplots(subplot_kw={'polar': True})
         ax2.plot(angles, radar_values, 'o-', linewidth=2)
