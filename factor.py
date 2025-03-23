@@ -68,25 +68,40 @@ def trial_division(n):
 # Quantum Mode Simulation - Qiskit (No Aer)
 # ------------------------------------------------------------
 def render_quantum_mode():
-    st.subheader("🚀 Quantum Mode - Visual Qiskit Circuit (Cloud-Safe)")
-    st.info("This simulation illustrates how quantum circuits can be built using Qiskit to demonstrate factorization principles.")
+    st.subheader("🚀 Quantum Mode — Shor's Algorithm Circuit (Visual Demo)")
+    st.markdown("This simplified circuit mimics key steps in Shor's Algorithm for factoring 15.")
+    
+    # Build Shor-style circuit: superposition + controlled gates + inverse QFT
+    qc = QuantumCircuit(4, 4)
 
-    st.markdown("#### Step 1: Creating a quantum circuit")
-    qc = QuantumCircuit(3, 3)
+    st.markdown("#### Step 1: Initialize superposition")
     qc.h(0)
-    qc.cx(0, 1)
-    qc.cx(1, 2)
+    qc.h(1)
+
+    st.markdown("#### Step 2: Mock controlled modular exponentiation")
+    qc.cx(0, 2)
+    qc.cx(1, 3)
     qc.barrier()
-    qc.measure([0, 1, 2], [0, 1, 2])
 
-    st.code(qc.draw(output="text"), language="qiskit")
+    st.markdown("#### Step 3: Apply inverse QFT (simplified)")
+    qc.h(0)
+    qc.h(1)
+    qc.barrier()
 
-    st.markdown("#### Step 2: Simulated Outcome (Static Preview)")
-    example_counts = {"000": 420, "111": 300, "101": 150, "010": 130}
+    st.markdown("#### Step 4: Measure result")
+    qc.measure([0, 1, 2, 3], [0, 1, 2, 3])
+
+    # Display circuit diagram
+    st.code(qc.draw(output='text'), language='qiskit')
+
+    # Show example result (mocked counts)
+    st.markdown("#### Simulated Measurement Outcome (Static Preview)")
+    example_counts = {"0000": 250, "0011": 150, "1111": 120, "1001": 200}
     st.json(example_counts)
 
-    st.success("✅ Quantum logic circuit shown using Qiskit. Simulation would run locally.")
-    st.markdown("Use this with screenshots in your report/Viva to show understanding of real quantum design!")
+    st.success("✅ This Qiskit circuit mimics core steps of Shor's Algorithm for factoring 15.")
+    st.info("For actual execution, run locally using Qiskit Aer and real modular exponentiation gates.")
+
 
 # ------------------------------------------------------------
 # Navigation
