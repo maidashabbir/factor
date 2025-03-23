@@ -1,6 +1,7 @@
 streamlit
-matplotlib
 pandas
+matplotlib
 numpy
 streamlit-lottie
-qiskit==1.0.2
+qiskit
+qiskit-aer
